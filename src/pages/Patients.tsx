@@ -2,7 +2,7 @@ import { useMemo, useState, type FormEvent } from 'react'
 import { useStore } from '../store/AppStore'
 import { formatPhone, normalizePhone } from '../lib/phone'
 import { formatTime, relativeDay, todayISO } from '../lib/dates'
-import { genericMessage, openWhatsApp } from '../lib/whatsapp'
+import { genericMessage, whatsappUrl } from '../lib/whatsapp'
 import { navigate } from '../lib/router'
 import { Avatar, EmptyState, Sheet } from '../components/ui'
 import { IconCalendar, IconPhone, IconPlus, IconSearch, IconUsers, IconWhatsApp } from '../components/Icons'
@@ -87,7 +87,7 @@ export function Patients() {
               <div className="hide-mobile muted">{visitsByPatient.get(p.id) ?? 0}</div>
               <div className="patient-actions">
                 <a className="icon-btn" href={`tel:+${p.phone}`} aria-label="Llamar"><IconPhone size={18} /></a>
-                <button className="icon-btn wa" aria-label="WhatsApp" onClick={() => openWhatsApp(p.phone, genericMessage(p, clinic))}><IconWhatsApp size={18} /></button>
+                <a className="icon-btn wa" aria-label="WhatsApp" href={whatsappUrl(p.phone, genericMessage(p, clinic))} target="_blank" rel="noopener noreferrer"><IconWhatsApp size={18} /></a>
                 <button className="icon-btn" aria-label="Agendar" onClick={() => navigate('/nueva', { patient: p.id })}><IconCalendar size={18} /></button>
               </div>
             </div>

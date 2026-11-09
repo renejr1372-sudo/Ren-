@@ -33,7 +33,3 @@ export function genericMessage(p: Patient, clinic: Clinic): string {
 export function whatsappUrl(phone: string, text: string): string {
   return `https://wa.me/${phone.replace(/\D/g, '')}?text=${encodeURIComponent(text)}`
 }
-
-export function openWhatsApp(phone: string, text: string) {
-  window.open(whatsappUrl(phone, text), '_blank', 'noopener')
-}

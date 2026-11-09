@@ -3,7 +3,7 @@ import type { Appointment } from '../types'
 import { useStore } from '../store/AppStore'
 import { capitalize, endTime, formatLongDate, formatTime, formatTimeShort, relativeDay } from '../lib/dates'
 import { formatPhone } from '../lib/phone'
-import { confirmationMessage, openWhatsApp, reminderMessage } from '../lib/whatsapp'
+import { confirmationMessage, reminderMessage, whatsappUrl } from '../lib/whatsapp'
 import { navigate } from '../lib/router'
 import { Avatar, Sheet, StatusBadge } from './ui'
 import { IconCalendar, IconCheck, IconClock, IconPhone, IconTooth, IconWhatsApp, IconX } from './Icons'
@@ -14,22 +14,24 @@ export function WhatsAppButton({ appointment, compact, variant = 'confirm', labe
   const { patientById, doctorById, clinic, notify } = useStore()
   const p = patientById(appointment.patientId)
   if (!p) return null
-  const onClick = (e: MouseEvent) => {
-    e.stopPropagation()
-    const msg = variant === 'confirm'
-      ? confirmationMessage(p, appointment, doctorById(appointment.doctorId), clinic)
-      : reminderMessage(p, appointment, clinic)
-    openWhatsApp(p.phone, msg)
-    notify(`Abriendo WhatsApp con ${p.name.split(' ')[0]}…`, 'info')
+  const msg = variant === 'confirm'
+    ? confirmationMessage(p, appointment, doctorById(appointment.doctorId), clinic)
+    : reminderMessage(p, appointment, clinic)
+  // Enlace real (<a>) en lugar de window.open: Safari en iPhone lo abre directo en la app de WhatsApp.
+  const props = {
+    href: whatsappUrl(p.phone, msg),
+    target: '_blank',
+    rel: 'noopener noreferrer',
+    onClick: (e: MouseEvent) => { e.stopPropagation(); notify(`Abriendo WhatsApp con ${p.name.split(' ')[0]}…`, 'info') },
   }
   return compact ? (
-    <button className="icon-btn wa" onClick={onClick} aria-label="Enviar WhatsApp" title="Enviar confirmación por WhatsApp">
+    <a className="icon-btn wa" {...props} aria-label="Enviar WhatsApp" title="Enviar confirmación por WhatsApp">
       <IconWhatsApp size={18} />
-    </button>
+    </a>
   ) : (
-    <button className="btn btn-wa" onClick={onClick}>
+    <a className="btn btn-wa" {...props}>
       <IconWhatsApp size={18} /> {label ?? (variant === 'confirm' ? 'Confirmar por WhatsApp' : 'Enviar recordatorio')}
-    </button>
+    </a>
   )
 }
 

@@ -4,7 +4,7 @@ import { useStore } from '../store/AppStore'
 import { treatments, isOverlapping } from '../data/mock'
 import { addDays, capitalize, dayNum, dayShort, endTime, formatLongDate, formatTime, fromMinutes, nowMinutes, parseISODate, todayISO } from '../lib/dates'
 import { formatPhone } from '../lib/phone'
-import { confirmationMessage, openWhatsApp } from '../lib/whatsapp'
+import { confirmationMessage, whatsappUrl } from '../lib/whatsapp'
 import { navigate } from '../lib/router'
 import { Avatar } from '../components/ui'
 import { IconAlert, IconCalendar, IconCheck, IconSearch, IconWhatsApp } from '../components/Icons'
@@ -89,9 +89,9 @@ export function NewAppointment({ params }: { params: URLSearchParams }) {
             <div><span>Doctor(a)</span>{d?.name}</div>
             <div><span>Teléfono</span>{formatPhone(p.phone)}</div>
           </div>
-          <button className="btn btn-wa btn-block btn-lg" onClick={() => { openWhatsApp(p.phone, confirmationMessage(p, created, d, clinic)) }}>
+          <a className="btn btn-wa btn-block btn-lg" href={whatsappUrl(p.phone, confirmationMessage(p, created, d, clinic))} target="_blank" rel="noopener noreferrer">
             <IconWhatsApp size={20} /> Confirmar por WhatsApp
-          </button>
+          </a>
           <div className="row-actions">
             <button className="btn btn-secondary" onClick={() => { setStatus(created.id, 'confirmada'); notify('Marcada como confirmada'); navigate('/agenda', { date: created.date }) }}>
               <IconCheck size={18} /> Ya confirmó
